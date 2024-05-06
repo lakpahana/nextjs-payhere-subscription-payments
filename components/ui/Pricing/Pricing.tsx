@@ -54,7 +54,7 @@ export default function Pricing({ user, products, subscription }: Props) {
       return router.push('/signin/signup');
     }
 
-    const { errorRedirect, sessionId } = await checkoutWithStripe(
+    const { errorRedirect, returnData } = await checkoutWithStripe(
       price,
       currentPath
     );
@@ -64,7 +64,7 @@ export default function Pricing({ user, products, subscription }: Props) {
       return router.push(errorRedirect);
     }
 
-    if (!sessionId) {
+    if (!returnData) {
       setPriceIdLoading(undefined);
       return router.push(
         getErrorRedirect(
@@ -75,8 +75,26 @@ export default function Pricing({ user, products, subscription }: Props) {
       );
     }
 
-    const stripe = await getStripe();
-    stripe?.redirectToCheckout({ sessionId });
+    console.log('returnData', returnData);
+
+    const form = document.createElement('form');
+    form.method = 'POST';
+    form.action = 'https://sandbox.payhere.lk/pay/checkout';
+
+    for (const key in returnData) {
+      const input = document.createElement('input');
+      input.type = 'hidden';
+      input.name = key;
+      input.value = returnData[key];
+      form.appendChild(input);
+    }
+
+    document.body.appendChild(form);
+    form.submit();
+    // document.body.removeChild(form);
+
+    // const stripe = await getStripe();
+    // stripe?.redirectToCheckout({ sessionId });
 
     setPriceIdLoading(undefined);
   };

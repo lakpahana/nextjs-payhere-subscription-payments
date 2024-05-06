@@ -111,13 +111,7 @@ const createCustomerInStripe = async (uuid: string, email: string) => {
   return newCustomer.id;
 };
 
-const createOrRetrieveCustomer = async ({
-  email,
-  uuid
-}: {
-  email: string;
-  uuid: string;
-}) => {
+const createOrRetrieveCustomer = async ({ email, uuid }: { email: string; uuid: string; }) => {
   // Check if the customer already exists in Supabase
   const { data: existingSupabaseCustomer, error: queryError } =
     await supabaseAdmin
@@ -208,6 +202,15 @@ const copyBillingDetailsToCustomer = async (
   if (updateError) throw new Error(`Customer update failed: ${updateError.message}`);
 };
 
+
+const generateOrderId = () => {
+  return Math.floor(Math.random() * 1000000).toString();
+}
+
+const generateHash = (orderId: string, amount: number, currency: string) => {
+
+}
+
 const manageSubscriptionStatusChange = async (
   subscriptionId: string,
   customerId: string,
@@ -288,5 +291,6 @@ export {
   deleteProductRecord,
   deletePriceRecord,
   createOrRetrieveCustomer,
-  manageSubscriptionStatusChange
+  manageSubscriptionStatusChange,
+  generateOrderId
 };
